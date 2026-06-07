@@ -468,7 +468,7 @@
       }
       .flame {
         transform-origin: 50% 100%;
-        animation: flicker 0.3s ease-in-out infinite alternate;
+        animation: flicker 0.5s ease-in-out infinite alternate;
       }
       @keyframes flicker {
         from {
@@ -716,6 +716,32 @@
         }
       }
 
+      @keyframes messagePop {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes messageFade {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(0.8);
+          opacity: 0;
+        }
+      }
+
       /* ── LETTER OPENING ── */
       .letter-overlay {
         position: fixed;
@@ -851,7 +877,8 @@
           <div class="timeline-content">
             <p class="timeline-date">Ce soir-là</p>
             <p class="timeline-text">
-              T'as la tête bien faite. Et ça, aucun examen peut te l'enlever ne laisse jamais rien ni personne te dire le contraire.
+              T'as la tête bien faite. Et ça, aucun examen peut te l'enlever ne
+              laisse jamais rien ni personne te dire le contraire.
             </p>
           </div>
         </div>
@@ -892,7 +919,8 @@
           <div class="timeline-content">
             <p class="timeline-date">Aujourd'hui</p>
             <p class="timeline-text">
-              Ce jour ou le soleil illuminé ton visage et tout la bauté en toi etait ressenti
+              Ce jour ou le soleil illuminé ton visage et tout la bauté en toi
+              etait ressenti
             </p>
           </div>
         </div>
@@ -1646,13 +1674,41 @@
 
         document.getElementById("blowBtn").style.display = "none";
 
+        // Show "ton vœu sera exaucé" message
+        setTimeout(() => {
+          const wishMessage = document.createElement("div");
+          wishMessage.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 20px;
+            padding: 2rem 3rem;
+            text-align: center;
+            z-index: 2500;
+            animation: messagePop 0.5s ease forwards;
+          `;
+          wishMessage.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); line-height: 1.8;">Ton vœu sera exaucé 💝</p>
+          `;
+          document.body.appendChild(wishMessage);
+
+          setTimeout(() => {
+            wishMessage.style.animation = "messageFade 0.5s ease forwards";
+            setTimeout(() => wishMessage.remove(), 500);
+          }, 2000);
+        }, 500);
+
         setTimeout(() => {
           const fadeOverlay = document.getElementById("fadeOverlay");
           fadeOverlay.classList.add("active");
           setTimeout(() => {
             document.getElementById("restartSection").classList.add("show");
           }, 2500);
-        }, 600);
+        }, 2800);
       }
 
       // ── RESTART EXPERIENCE ──
