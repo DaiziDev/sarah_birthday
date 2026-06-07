@@ -268,11 +268,103 @@
         display: block;
       }
 
-      /* ── GIFTS ── */
-      .gifts-section {
+      /* ── PASSWORD SECTION ── */
+      .password-section {
+        text-align: center;
+        padding: 6rem 2rem;
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .password-display {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 3rem;
+        letter-spacing: 1rem;
+        margin-bottom: 3rem;
+        color: var(--rose);
+        min-height: 4rem;
+      }
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        max-width: 300px;
+      }
+      .key {
+        width: 80px;
+        height: 80px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 107, 157, 0.3);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .key:hover {
+        background: rgba(255, 107, 157, 0.2);
+        transform: scale(1.05);
+      }
+      .key.clear {
+        background: rgba(255, 107, 157, 0.1);
+        border-color: rgba(255, 107, 157, 0.5);
+      }
+      .key.enter {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: rgba(255, 215, 0, 0.5);
+      }
+
+      /* ── BIRTHDAY ANIMATION ── */
+      .birthday-section {
         text-align: center;
         padding: 8rem 2rem;
         min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .birthday-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 300;
+        background: linear-gradient(135deg, #fff 0%, #ff6b9d 50%, #ffd700 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: birthdayPop 1s ease forwards;
+      }
+      .birthday-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 6vw, 4rem);
+        font-weight: 300;
+        color: var(--text);
+        margin-top: 1rem;
+        animation: birthdayPop 1s ease 0.5s forwards;
+        opacity: 0;
+      }
+      @keyframes birthdayPop {
+        0% {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ── GIFTS ── */
+      .gifts-section {
+        text-align: center;
+        padding: 6rem 2rem;
+        min-height: 60vh;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -282,20 +374,14 @@
         font-family: "Cormorant Garamond", serif;
         font-size: clamp(2rem, 5vw, 3rem);
         font-weight: 300;
-        margin-bottom: 1rem;
+        margin-bottom: 3rem;
         color: var(--text);
-      }
-      .gifts-subtitle {
-        font-size: 1rem;
-        color: var(--muted);
-        margin-bottom: 4rem;
       }
       .gifts-container {
         display: flex;
         gap: 3rem;
         flex-wrap: wrap;
         justify-content: center;
-        margin-bottom: 4rem;
       }
       .gift-ball {
         width: 120px;
@@ -326,20 +412,299 @@
         transform: scale(1.15);
         box-shadow: 0 20px 40px rgba(255, 107, 157, 0.4);
       }
-      .gift-ball::after {
+
+      /* ── CAKE SECTION ── */
+      .cake-section {
+        text-align: center;
+        padding: 6rem 2rem;
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .cake-container {
+        margin-bottom: 3rem;
+        position: relative;
+        display: inline-block;
+      }
+      .cake {
+        width: 500px;
+        height: 500px;
+        border-radius: 20px;
+        object-fit: cover;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      }
+      .candles {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 25px;
+      }
+      .candle {
+        width: 14px;
+        height: 50px;
+        background: linear-gradient(135deg, #fff, #ffd700);
+        border-radius: 7px;
+        position: relative;
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+      }
+      .flame {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 22px;
+        height: 30px;
+        background: linear-gradient(135deg, #ff6b9d, #ffd700, #ff9dce);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        animation: flicker 0.2s ease-in-out infinite alternate;
+        opacity: 0;
+        filter: blur(1.5px);
+        box-shadow:
+          0 0 30px rgba(255, 107, 157, 0.9),
+          0 0 60px rgba(255, 215, 0, 0.7),
+          0 0 90px rgba(255, 107, 157, 0.5);
+      }
+      .flame.lit {
+        opacity: 1;
+        animation:
+          flameAppear 0.5s ease forwards,
+          flicker 0.2s ease-in-out infinite alternate 0.5s;
+      }
+      .flame::before {
         content: "";
         position: absolute;
-        inset: -5px;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 10px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        animation: spin 10s linear infinite;
+        filter: blur(3px);
       }
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
+      @keyframes flameAppear {
+        0% {
+          transform: translateX(-50%) scale(0) rotate(0deg);
+          opacity: 0;
         }
-        to {
-          transform: rotate(360deg);
+        50% {
+          transform: translateX(-50%) scale(1.3) rotate(180deg);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateX(-50%) scale(1) rotate(360deg);
+          opacity: 1;
+        }
+      }
+      @keyframes flicker {
+        0% {
+          transform: translateX(-50%) scale(1) rotate(-3deg);
+          opacity: 0.85;
+        }
+        25% {
+          transform: translateX(-50%) scale(1.08) rotate(2deg);
+          opacity: 1;
+        }
+        50% {
+          transform: translateX(-50%) scale(0.92) rotate(-2deg);
+          opacity: 0.8;
+        }
+        75% {
+          transform: translateX(-50%) scale(1.05) rotate(3deg);
+          opacity: 0.95;
+        }
+        100% {
+          transform: translateX(-50%) scale(1) rotate(-3deg);
+          opacity: 0.85;
+        }
+      }
+      .blow-btn {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 157, 0.2),
+          rgba(255, 215, 0, 0.2)
+        );
+        border: 1px solid rgba(255, 107, 157, 0.5);
+        border-radius: 100px;
+        padding: 1rem 2rem;
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .blow-btn:hover {
+        background: rgba(255, 107, 157, 0.3);
+        transform: scale(1.05);
+      }
+
+      /* ── WISH POPUP ── */
+      .wish-popup {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .wish-popup.show {
+        display: flex;
+      }
+      .wish-content {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border: 1px solid rgba(255, 107, 157, 0.3);
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+      .wish-emoji {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+      }
+      .wish-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--rose);
+        margin-bottom: 1rem;
+      }
+      .wish-subtitle {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        font-style: italic;
+      }
+      .wish-content textarea {
+        width: 100%;
+        min-height: 120px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 107, 157, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        color: var(--text);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        resize: none;
+        outline: none;
+        margin-bottom: 1.5rem;
+      }
+      .wish-send {
+        background: linear-gradient(135deg, #ff6b9d, #ffd700);
+        border: none;
+        border-radius: 100px;
+        padding: 1rem 2rem;
+        color: #fff;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .wish-send:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+      }
+
+      /* ── ERROR POPUP ── */
+      .error-popup {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .error-popup.show {
+        display: flex;
+      }
+      .error-content {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border: 1px solid rgba(255, 107, 157, 0.3);
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+      .error-sticker {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+      }
+      .error-message {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        color: var(--text);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+      }
+      .error-close {
+        background: transparent;
+        border: 1px solid rgba(255, 107, 157, 0.5);
+        border-radius: 100px;
+        padding: 0.8rem 2rem;
+        color: var(--rose);
+        font-family: "DM Sans", sans-serif;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .error-close:hover {
+        background: rgba(255, 107, 157, 0.1);
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+          transform: translateX(-10px);
+        }
+        20%,
+        40%,
+        60%,
+        80% {
+          transform: translateX(10px);
+        }
+      }
+
+      @keyframes errorPop {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes errorFade {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(0.8);
+          opacity: 0;
         }
       }
 
@@ -442,7 +807,7 @@
     <!-- HERO -->
     <section class="hero">
       <img
-        src="photo_1_2026-06-07_22-13-49.jpg"
+        src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_1_2026-06-07_22-13-49.jpg"
         alt="Sarah"
         class="hero-photo"
       />
@@ -457,7 +822,7 @@
       <div class="timeline">
         <div class="timeline-item">
           <img
-            src="photo_2_2026-06-07_22-13-49.jpg"
+            src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_2_2026-06-07_22-13-49_il0yow.jpg"
             alt="Moment 1"
             class="timeline-photo"
           />
@@ -471,7 +836,7 @@
         </div>
         <div class="timeline-item">
           <img
-            src="photo_3_2026-06-07_22-13-49.jpg"
+            src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_3_2026-06-07_22-13-49_ylhnr1.jpg"
             alt="Moment 2"
             class="timeline-photo"
           />
@@ -485,7 +850,7 @@
         </div>
         <div class="timeline-item">
           <img
-            src="photo_4_2026-06-07_22-13-49.jpg"
+            src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_4_2026-06-07_22-13-49_cfk5im.jpg"
             alt="Moment 3"
             class="timeline-photo"
           />
@@ -499,7 +864,7 @@
         </div>
         <div class="timeline-item">
           <img
-            src="photo_5_2026-06-07_22-13-49.jpg"
+            src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_5_2026-06-07_22-13-49_ej4fcw.jpg"
             alt="Moment 4"
             class="timeline-photo"
           />
@@ -513,7 +878,7 @@
         </div>
         <div class="timeline-item">
           <img
-            src="photo_6_2026-06-07_22-13-49.jpg"
+            src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_6_2026-06-07_22-13-49_wuq4gw.jpg"
             alt="Moment 5"
             class="timeline-photo"
           />
@@ -585,48 +950,102 @@
       <h2 class="section-title">Un petit message pour toi</h2>
       <div class="video-container">
         <video controls>
-          <source src="video_2026-06-07_22-13-49.mp4" type="video/mp4" />
+          <source
+            src="https://res.cloudinary.com/dlhevtzle/video/upload/v1780869924/video_2026-06-07_22-13-49_fli8ye.mp4"
+            type="video/mp4"
+          />
         </video>
       </div>
     </section>
 
-    <!-- GIFTS -->
-    <section class="gifts-section">
-      <h2 class="gifts-title">Choisis ton cadeau ✨</h2>
-      <p class="gifts-subtitle">
-        Trois possibilités, une seule réponse — tu la connais pourtant.
-      </p>
-      <div class="gifts-container">
-        <div class="gift-ball" onclick="openGift(1)">🎁</div>
-        <div class="gift-ball" onclick="openGift(2)">🎀</div>
-        <div class="gift-ball" onclick="openGift(3)">💝</div>
+    <!-- PASSWORD SECTION -->
+    <section class="password-section" id="passwordSection">
+      <h2 class="section-title">Entre le code secret 🔐</h2>
+      <div class="password-display" id="passwordDisplay">_ _ _ _</div>
+      <div class="keypad">
+        <button class="key" onclick="addDigit(1)">1</button>
+        <button class="key" onclick="addDigit(2)">2</button>
+        <button class="key" onclick="addDigit(3)">3</button>
+        <button class="key" onclick="addDigit(4)">4</button>
+        <button class="key" onclick="addDigit(5)">5</button>
+        <button class="key" onclick="addDigit(6)">6</button>
+        <button class="key" onclick="addDigit(7)">7</button>
+        <button class="key" onclick="addDigit(8)">8</button>
+        <button class="key" onclick="addDigit(9)">9</button>
+        <button class="key clear" onclick="clearPassword()">C</button>
+        <button class="key" onclick="addDigit(0)">0</button>
+        <button class="key clear" onclick="clearPassword()">⌫</button>
       </div>
     </section>
 
-    <!-- LETTER OVERLAY -->
-    <div class="letter-overlay" id="letterOverlay">
-      <div class="letter">
-        <div class="letter-emoji" id="letterEmoji">🎁</div>
-        <h3 class="letter-title" id="letterTitle">Ton cadeau</h3>
-        <p class="letter-message" id="letterMessage"></p>
-        <p class="letter-wish" id="letterWish"></p>
-        <div class="letter-close">
-          <button onclick="closeLetter()">Fermer</button>
+    <!-- HAPPY BIRTHDAY ANIMATION -->
+    <section
+      class="birthday-section"
+      id="birthdaySection"
+      style="display: none"
+    >
+      <div class="birthday-text">Happy Birthday</div>
+      <div class="birthday-name">Sarah ✨</div>
+    </section>
+
+    <!-- GIFTS SELECTION -->
+    <section class="gifts-section" id="giftsSection" style="display: none">
+      <h2 class="gifts-title">Choisis ton cadeau ✨</h2>
+      <div class="gifts-container">
+        <div class="gift-ball" onclick="selectGift(1)">🎁</div>
+        <div class="gift-ball" onclick="selectGift(2)">🎀</div>
+        <div class="gift-ball" onclick="selectGift(3)">💝</div>
+      </div>
+    </section>
+
+    <!-- CAKE SECTION -->
+    <section class="cake-section" id="cakeSection" style="display: none">
+      <div class="cake-container">
+        <img
+          src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=600&h=600&fit=crop"
+          alt="Birthday Cake"
+          class="cake"
+        />
+        <div class="candles" id="candles">
+          <div class="candle" id="candle1"><div class="flame"></div></div>
+          <div class="candle" id="candle2"><div class="flame"></div></div>
+          <div class="candle" id="candle3"><div class="flame"></div></div>
+          <div class="candle" id="candle4"><div class="flame"></div></div>
+          <div class="candle" id="candle5"><div class="flame"></div></div>
         </div>
+      </div>
+      <button
+        class="blow-btn"
+        id="blowBtn"
+        style="display: none"
+        onclick="blowCandles()"
+      >
+        🌬️ Souffler
+      </button>
+    </section>
+
+    <!-- WISH POPUP -->
+    <div class="wish-popup" id="wishPopup">
+      <div class="wish-content">
+        <div class="wish-emoji">🎂</div>
+        <h3 class="wish-title">Fais un vœu</h3>
+        <p class="wish-subtitle">
+          Ce vœu est uniquement pour toi. Personne d'autre ne le connaîtra,
+          jamais. C'est ton secret à toi 💝
+        </p>
+        <textarea id="wishInput" placeholder="Ton vœu secret..."></textarea>
+        <button class="wish-send" onclick="sendWish()">Envoyer ✨</button>
       </div>
     </div>
 
-    <!-- FINAL -->
-    <section class="final">
-      <div class="final-emoji">🎂</div>
-      <p class="final-text">
-        Joyeux anniversaire, Sarah.<br /><br />
-        J'espère que tu as souri au moins une fois.<br />
-        J'espère surtout que tu as compris<br />
-        ce que je n'ai pas encore su dire à voix haute.
-      </p>
-      <p class="final-signature">— avec tout ce que j'ai ✨</p>
-    </section>
+    <!-- ERROR POPUP -->
+    <div class="error-popup" id="errorPopup">
+      <div class="error-content">
+        <div class="error-sticker" id="errorSticker">😅</div>
+        <p class="error-message" id="errorMessage"></p>
+        <button class="error-close" onclick="closeError()">OK</button>
+      </div>
+    </div>
 
     <script>
       // ── PARTICLES ──
@@ -697,58 +1116,183 @@
           observer.observe(el);
         });
 
-      // ── GIFTS SYSTEM ──
-      const gifts = {
-        1: {
-          emoji: "🎁",
-          title: "Un moment à deux",
-          message:
-            "Un dîner, juste nous deux. Pas de téléphone, pas de distractions. Juste toi, moi, et une conversation qui n'en finit pas.",
-          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
-        },
-        2: {
-          emoji: "🎀",
-          title: "Une soirée cinéma",
-          message:
-            "Ce film qu'on attend de voir depuis longtemps. Peaky Blinders ou autre chose — peu importe, tant qu'on est ensemble.",
-          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
-        },
-        3: {
-          emoji: "💝",
-          title: "Une surprise",
-          message:
-            "Quelque chose que tu n'attends pas. Quelque chose de simple, mais pensé juste pour toi. Parce que tu le mérites.",
-          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
-        },
-      };
+      // ── PASSWORD SYSTEM ──
+      let password = "";
+      let wrongAttempts = 0;
+      const CORRECT_PASSWORD = "0806";
 
-      function openGift(id) {
-        const gift = gifts[id];
-        const overlay = document.getElementById("letterOverlay");
+      function addDigit(digit) {
+        if (password.length < 4) {
+          password += digit;
+          updatePasswordDisplay();
 
-        document.getElementById("letterEmoji").textContent = gift.emoji;
-        document.getElementById("letterTitle").textContent = gift.title;
-        document.getElementById("letterMessage").textContent = gift.message;
-        document.getElementById("letterWish").textContent = gift.wish;
+          // Auto-check after 4 digits
+          if (password.length === 4) {
+            setTimeout(() => checkPassword(), 300);
+          }
+        }
+      }
 
-        overlay.classList.add("show");
+      function clearPassword() {
+        password = "";
+        updatePasswordDisplay();
+      }
 
-        // Store the choice in localStorage for tracking
+      function updatePasswordDisplay() {
+        const display = document.getElementById("passwordDisplay");
+        let displayText = "";
+        for (let i = 0; i < 4; i++) {
+          displayText += i < password.length ? password[i] : "_";
+          if (i < 3) displayText += " ";
+        }
+        display.textContent = displayText;
+      }
+
+      function checkPassword() {
+        if (password === CORRECT_PASSWORD) {
+          showBirthdayAnimation();
+        } else {
+          wrongAttempts++;
+          showError();
+          clearPassword();
+        }
+      }
+
+      function showError() {
+        // Vibrate the phone
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 100, 200]);
+        }
+
+        const display = document.getElementById("passwordDisplay");
+        const section = document.getElementById("passwordSection");
+
+        // Shake animation
+        section.style.animation = "shake 0.5s ease";
+        display.style.color = "#ff4444";
+
+        setTimeout(() => {
+          section.style.animation = "";
+          display.style.color = "var(--rose)";
+        }, 500);
+
+        // Show error message with animation
+        const sticker = wrongAttempts === 1 ? "😅" : "😂";
+        const message =
+          wrongAttempts === 1
+            ? "Sérieuse ? C'est ton anniversaire et tu connais pas le mot de passe ?"
+            : "Donc tu connais même pas la date d'aujourd'hui ?";
+
+        // Create floating error message
+        const errorDiv = document.createElement("div");
+        errorDiv.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          background: linear-gradient(135deg, #1a1a2e, #16213e);
+          border: 2px solid rgba(255, 68, 68, 0.5);
+          border-radius: 20px;
+          padding: 2rem 3rem;
+          text-align: center;
+          z-index: 2000;
+          animation: errorPop 0.5s ease forwards;
+        `;
+        errorDiv.innerHTML = `
+          <div style="font-size: 4rem; margin-bottom: 1rem;">${sticker}</div>
+          <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--text); line-height: 1.8;">${message}</p>
+        `;
+        document.body.appendChild(errorDiv);
+
+        setTimeout(() => {
+          errorDiv.style.animation = "errorFade 0.3s ease forwards";
+          setTimeout(() => errorDiv.remove(), 300);
+        }, 2000);
+      }
+
+      function closeError() {
+        document.getElementById("errorPopup").classList.remove("show");
+      }
+
+      function showBirthdayAnimation() {
+        document.getElementById("passwordSection").style.display = "none";
+        document.getElementById("birthdaySection").style.display = "flex";
+
+        setTimeout(() => {
+          document.getElementById("birthdaySection").style.display = "none";
+          document.getElementById("giftsSection").style.display = "flex";
+        }, 3000);
+      }
+
+      // ── GIFTS SELECTION ──
+      function selectGift(id) {
         localStorage.setItem("sarah_gift_choice", id);
         localStorage.setItem("sarah_gift_timestamp", new Date().toISOString());
 
-        console.log("Sarah a choisi le cadeau #" + id);
+        document.getElementById("giftsSection").style.display = "none";
+        document.getElementById("cakeSection").style.display = "flex";
+
+        // Light candles one by one
+        lightCandles();
       }
 
-      function closeLetter() {
-        document.getElementById("letterOverlay").classList.remove("show");
+      function lightCandles() {
+        const candles = document.querySelectorAll(".flame");
+        candles.forEach((flame, index) => {
+          setTimeout(() => {
+            flame.classList.add("lit");
+            if (index === candles.length - 1) {
+              setTimeout(() => {
+                document.getElementById("blowBtn").style.display =
+                  "inline-block";
+                document.getElementById("wishPopup").classList.add("show");
+              }, 500);
+            }
+          }, index * 800);
+        });
       }
 
-      // Check if there's a stored choice (for you to see what she chose)
+      // ── WISH SYSTEM ──
+      function sendWish() {
+        const wish = document.getElementById("wishInput").value.trim();
+        if (wish) {
+          localStorage.setItem("sarah_wish", wish);
+          localStorage.setItem(
+            "sarah_wish_timestamp",
+            new Date().toISOString(),
+          );
+          console.log("Vœu de Sarah:", wish);
+          document.getElementById("wishPopup").classList.remove("show");
+        } else {
+          alert("Écris ton vœu d'abord 💝");
+        }
+      }
+
+      // ── BLOW CANDLES ──
+      function blowCandles() {
+        const flames = document.querySelectorAll(".flame");
+        flames.forEach((flame) => {
+          flame.classList.remove("lit");
+        });
+
+        document.getElementById("blowBtn").style.display = "none";
+
+        setTimeout(() => {
+          alert("🎂 Joyeux anniversaire Sarah ! 🎂");
+        }, 500);
+      }
+
+      // ── CHECK STORED DATA ──
       const storedChoice = localStorage.getItem("sarah_gift_choice");
       if (storedChoice) {
         console.log("Sarah a choisi le cadeau #" + storedChoice);
         console.log("Timestamp:", localStorage.getItem("sarah_gift_timestamp"));
+      }
+
+      const storedWish = localStorage.getItem("sarah_wish");
+      if (storedWish) {
+        console.log("Vœu de Sarah:", storedWish);
+        console.log("Timestamp:", localStorage.getItem("sarah_wish_timestamp"));
       }
     </script>
   </body>

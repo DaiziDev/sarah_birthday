@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voir le vœu de Sarah</title>
+<style>
+body{font-family:'DM Sans',sans-serif;background:#0a0a0f;color:#fff;padding:2rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.container{max-width:600px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,107,157,0.3);border-radius:20px;padding:2rem;}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:2rem;text-align:center;color:#ff6b9d;}
+.wish-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,107,157,0.2);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.2rem;line-height:1.8;font-style:italic;}
+.info{font-size:0.9rem;color:rgba(255,255,255,0.5);text-align:center;}
+.no-wish{text-align:center;color:rgba(255,255,255,0.5);padding:2rem;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>✨ Vœu de Sarah</h1>
+<div id="wishContent"></div>
+<div class="info">Ouvrez ce fichier sur l'ordinateur de Sarah après qu'elle ait écrit son vœu</div>
+</div>
+
+<script>
+const wish=localStorage.getItem('sarah_wish');
+const timestamp=localStorage.getItem('sarah_wish_timestamp');
+const giftChoice=localStorage.getItem('sarah_gift_choice');
+
+const container=document.getElementById('wishContent');
+
+if(wish){
+  const date=timestamp?new Date(timestamp).toLocaleString('fr-FR'):'Date inconnue';
+  const giftNames={'1':'Un moment à deux','2':'Une soirée cinéma','3':'Une surprise'};
+  const giftName=giftChoice?giftNames[giftChoice]:'Inconnu';
+  
+  container.innerHTML=`
+    <div class="wish-box">${wish}</div>
+    <div class="info">
+      <p>Cadeau choisi : ${giftName}</p>
+      <p>Date : ${date}</p>
+    </div>
+  `;
+}else{
+  container.innerHTML='<div class="no-wish">Sarah n\'a pas encore écrit son vœu 💝</div>';
+}
+</script>
+</body>
+</html>
