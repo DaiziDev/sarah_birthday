@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joyeux Anniversaire Sarah ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0a0a0f;
+        --rose: #ff6b9d;
+        --gold: #ffd700;
+        --text: rgba(255, 255, 255, 0.95);
+        --muted: rgba(255, 255, 255, 0.5);
+        --glass: rgba(255, 255, 255, 0.03);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* ── CANVAS ── */
+      #particleCanvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        z-index: 1;
+      }
+      .hero-photo {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 2rem;
+        animation: float 6s ease-in-out infinite;
+        box-shadow: 0 0 60px rgba(255, 107, 157, 0.3);
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+      .hero-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 300;
+        background: linear-gradient(135deg, #fff 0%, #ff6b9d 50%, #ffd700 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        animation: fadeInUp 1s ease forwards;
+      }
+      .hero-subtitle {
+        font-size: 1.1rem;
+        color: var(--muted);
+        animation: fadeInUp 1s ease 0.3s forwards;
+        opacity: 0;
+      }
+      .scroll-hint {
+        position: absolute;
+        bottom: 3rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+        animation: bounce 2s ease-in-out infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(10px);
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── SECTIONS ── */
+      section {
+        padding: 6rem 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      .section-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 300;
+        text-align: center;
+        margin-bottom: 3rem;
+        color: var(--text);
+      }
+
+      /* ── TIMELINE ── */
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 4rem;
+      }
+      .timeline-item {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s ease;
+      }
+      .timeline-item.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .timeline-item:nth-child(even) {
+        flex-direction: row-reverse;
+        transform: translateX(50px);
+      }
+      .timeline-item:nth-child(even).visible {
+        transform: translateX(0);
+      }
+      .timeline-photo {
+        width: 300px;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        transition: transform 0.4s ease;
+      }
+      .timeline-photo:hover {
+        transform: scale(1.03);
+      }
+      .timeline-content {
+        flex: 1;
+      }
+      .timeline-date {
+        font-size: 0.85rem;
+        color: var(--rose);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 0.5rem;
+      }
+      .timeline-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        font-weight: 300;
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      /* ── MESSAGES ── */
+      .messages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+      }
+      .message-card {
+        background: var(--glass);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.4s ease;
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      .message-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .message-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 107, 157, 0.3);
+        box-shadow: 0 20px 40px rgba(255, 107, 157, 0.1);
+      }
+      .message-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .message-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        font-weight: 300;
+        line-height: 1.9;
+        color: var(--text);
+      }
+
+      /* ── SPECIAL ── */
+      .special {
+        text-align: center;
+        padding: 8rem 2rem;
+      }
+      -special-content {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .special-emoji {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+        animation: float 4s ease-in-out infinite;
+      }
+      .special-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.4rem;
+        font-weight: 300;
+        line-height: 2;
+        color: var(--text);
+        margin-bottom: 2rem;
+      }
+      .special-highlight {
+        color: var(--rose);
+        font-style: italic;
+      }
+
+      /* ── VIDEO ── */
+      .video-section {
+        text-align: center;
+        padding: 4rem 2rem;
+      }
+      .video-container {
+        max-width: 700px;
+        margin: 0 auto;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+      video {
+        width: 100%;
+        display: block;
+      }
+
+      /* ── GIFTS ── */
+      .gifts-section {
+        text-align: center;
+        padding: 8rem 2rem;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .gifts-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 300;
+        margin-bottom: 1rem;
+        color: var(--text);
+      }
+      .gifts-subtitle {
+        font-size: 1rem;
+        color: var(--muted);
+        margin-bottom: 4rem;
+      }
+      .gifts-container {
+        display: flex;
+        gap: 3rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 4rem;
+      }
+      .gift-ball {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        transition: all 0.4s ease;
+        position: relative;
+        animation: float 4s ease-in-out infinite;
+      }
+      .gift-ball:nth-child(1) {
+        background: linear-gradient(135deg, #ff6b9d, #ff9dce);
+        animation-delay: 0s;
+      }
+      .gift-ball:nth-child(2) {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        animation-delay: 1s;
+      }
+      .gift-ball:nth-child(3) {
+        background: linear-gradient(135deg, #bf5af2, #c77dff);
+        animation-delay: 2s;
+      }
+      .gift-ball:hover {
+        transform: scale(1.15);
+        box-shadow: 0 20px 40px rgba(255, 107, 157, 0.4);
+      }
+      .gift-ball::after {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        animation: spin 10s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── LETTER OPENING ── */
+      .letter-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .letter-overlay.show {
+        display: flex;
+      }
+      .letter {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border: 1px solid rgba(255, 107, 157, 0.3);
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 500px;
+        width: 100%;
+        transform: scale(0.8) rotateX(90deg);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+      .letter-overlay.show .letter {
+        transform: scale(1) rotateX(0deg);
+        opacity: 1;
+      }
+      .letter-emoji {
+        font-size: 4rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .letter-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        text-align: center;
+        color: var(--rose);
+        margin-bottom: 1.5rem;
+      }
+      .letter-message {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.2rem;
+        font-weight: 300;
+        line-height: 2;
+        color: var(--text);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .letter-wish {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        color: var(--gold);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .letter-close {
+        text-align: center;
+      }
+      .letter-close button {
+        background: transparent;
+        border: 1px solid rgba(255, 107, 157, 0.5);
+        border-radius: 100px;
+        padding: 12px 30px;
+        color: var(--rose);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .letter-close button:hover {
+        background: rgba(255, 107, 157, 0.1);
+        color: #fff;
+      }
+
+      @media (max-width: 768px) {
+        .timeline-item,
+        .timeline-item:nth-child(even) {
+          flex-direction: column;
+          text-align: center;
+        }
+        .timeline-photo {
+          width: 100%;
+          max-width: 350px;
+          height: 450px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- HERO -->
+    <section class="hero">
+      <img
+        src="photo_1_2026-06-07_22-13-49.jpg"
+        alt="Sarah"
+        class="hero-photo"
+      />
+      <h1 class="hero-name">Sarah</h1>
+      <p class="hero-subtitle">Aujourd'hui, c'est ta journée ✨</p>
+      <div class="scroll-hint">↓</div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section class="timeline-section">
+      <h2 class="section-title">Tes moments</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <img
+            src="photo_2_2026-06-07_22-13-49.jpg"
+            alt="Moment 1"
+            class="timeline-photo"
+          />
+          <div class="timeline-content">
+            <p class="timeline-date">Le début</p>
+            <p class="timeline-text">
+              Avant qu'on se connaisse, il y avait une seule chose dans ta vie.
+              L'école. 🤣🤣🤣🤣🤣🤣
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <img
+            src="photo_3_2026-06-07_22-13-49.jpg"
+            alt="Moment 2"
+            class="timeline-photo"
+          />
+          <div class="timeline-content">
+            <p class="timeline-date">Ce soir-là</p>
+            <p class="timeline-text">
+              Ce film qu'on a regardé ensemble — je m'en souviens moins que du
+              silence entre nous. Ce confort inattendu. Cette légèreté.
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <img
+            src="photo_4_2026-06-07_22-13-49.jpg"
+            alt="Moment 3"
+            class="timeline-photo"
+          />
+          <div class="timeline-content">
+            <p class="timeline-date">Tes rires</p>
+            <p class="timeline-text">
+              Quand tu ris, tout s'illumine. C'est contagieux, c'est pur, c'est
+              toi. J'en redemande toujours.
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <img
+            src="photo_5_2026-06-07_22-13-49.jpg"
+            alt="Moment 4"
+            class="timeline-photo"
+          />
+          <div class="timeline-content">
+            <p class="timeline-date">Ta danse</p>
+            <p class="timeline-text">
+              Tu danses uniqeument quand personne ne regarde. Tu portes la
+              musique en toi d'une façon unique.
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <img
+            src="photo_6_2026-06-07_22-13-49.jpg"
+            alt="Moment 5"
+            class="timeline-photo"
+          />
+          <div class="timeline-content">
+            <p class="timeline-date">Aujourd'hui</p>
+            <p class="timeline-text">
+              Le jour où j'ai voulu te dire, sans trop de mots, que tu comptes
+              pour moi. Plus que tu ne le penses.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="messages-section">
+      <h2 class="section-title">Ce que je vois chez toi</h2>
+      <div class="messages-grid">
+        <div class="message-card">
+          <div class="message-icon">🌙</div>
+          <p class="message-text">
+            Tu as cette lumière intérieure qui attire les gens. Pas besoin de
+            chercher à briller — tu le fais naturellement.
+          </p>
+        </div>
+        <div class="message-card">
+          <div class="message-icon">🎬</div>
+          <p class="message-text">
+            Ce sont les petits moments qui font les grandes histoires. Et chaque
+            moment avec toi devient un souvenir.
+          </p>
+        </div>
+        <div class="message-card">
+          <div class="message-icon">🌟</div>
+          <p class="message-text">
+            Je te souhaite de trouver ce que tu cherches — et peut-être que tu
+            le trouveras plus près que tu ne le penses.
+          </p>
+        </div>
+        <div class="message-card">
+          <div class="message-icon">💫</div>
+          <p class="message-text">
+            Je ne sais pas encore ce qu'on sera. Mais je sais ce que je veux
+            essayer d'être pour toi : présent, vrai, constant.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPECIAL -->
+    <section class="special">
+      <div class="special-emoji">🔐</div>
+      <div class="special-content">
+        <p class="special-text">
+          Il y a un mot entre nous —<br />
+          une série, une promesse, un avenir.<br /><br />
+          <span class="special-highlight">Peaky Blinders.</span><br /><br />
+          Ce n'est pas juste une série —<br />
+          c'est une promesse qu'on s'est faite sans se le dire.<br />
+          Une prochaine soirée, un écran, toi à côté.<br /><br />
+          J'attends ce moment comme on attend quelque chose de rare.<br />
+          Parce que toi, Sarah — tu es quelque chose de rare.
+        </p>
+      </div>
+    </section>
+
+    <!-- VIDEO -->
+    <section class="video-section">
+      <h2 class="section-title">Un petit message pour toi</h2>
+      <div class="video-container">
+        <video controls>
+          <source src="video_2026-06-07_22-13-49.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </section>
+
+    <!-- GIFTS -->
+    <section class="gifts-section">
+      <h2 class="gifts-title">Choisis ton cadeau ✨</h2>
+      <p class="gifts-subtitle">
+        Trois possibilités, une seule réponse — tu la connais pourtant.
+      </p>
+      <div class="gifts-container">
+        <div class="gift-ball" onclick="openGift(1)">🎁</div>
+        <div class="gift-ball" onclick="openGift(2)">🎀</div>
+        <div class="gift-ball" onclick="openGift(3)">💝</div>
+      </div>
+    </section>
+
+    <!-- LETTER OVERLAY -->
+    <div class="letter-overlay" id="letterOverlay">
+      <div class="letter">
+        <div class="letter-emoji" id="letterEmoji">🎁</div>
+        <h3 class="letter-title" id="letterTitle">Ton cadeau</h3>
+        <p class="letter-message" id="letterMessage"></p>
+        <p class="letter-wish" id="letterWish"></p>
+        <div class="letter-close">
+          <button onclick="closeLetter()">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL -->
+    <section class="final">
+      <div class="final-emoji">🎂</div>
+      <p class="final-text">
+        Joyeux anniversaire, Sarah.<br /><br />
+        J'espère que tu as souri au moins une fois.<br />
+        J'espère surtout que tu as compris<br />
+        ce que je n'ai pas encore su dire à voix haute.
+      </p>
+      <p class="final-signature">— avec tout ce que j'ai ✨</p>
+    </section>
+
+    <script>
+      // ── PARTICLES ──
+      const canvas = document.getElementById("particleCanvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      function createParticle() {
+        return {
+          x: Math.random() * canvas.width,
+          y: canvas.height + 10,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: -Math.random() * 2 - 1,
+          size: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.5 + 0.3,
+          color: Math.random() > 0.5 ? "#ff6b9d" : "#ffd700",
+        };
+      }
+
+      for (let i = 0; i < 50; i++) particles.push(createParticle());
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, i) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.002;
+
+          if (p.alpha <= 0) {
+            particles[i] = createParticle();
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // ── SCROLL ANIMATIONS ──
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+
+      document
+        .querySelectorAll(".timeline-item,.message-card")
+        .forEach((el) => {
+          observer.observe(el);
+        });
+
+      // ── GIFTS SYSTEM ──
+      const gifts = {
+        1: {
+          emoji: "🎁",
+          title: "Un moment à deux",
+          message:
+            "Un dîner, juste nous deux. Pas de téléphone, pas de distractions. Juste toi, moi, et une conversation qui n'en finit pas.",
+          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
+        },
+        2: {
+          emoji: "🎀",
+          title: "Une soirée cinéma",
+          message:
+            "Ce film qu'on attend de voir depuis longtemps. Peaky Blinders ou autre chose — peu importe, tant qu'on est ensemble.",
+          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
+        },
+        3: {
+          emoji: "💝",
+          title: "Une surprise",
+          message:
+            "Quelque chose que tu n'attends pas. Quelque chose de simple, mais pensé juste pour toi. Parce que tu le mérites.",
+          wish: "Fais un vœu — tu sais lequel je veux réaliser.",
+        },
+      };
+
+      function openGift(id) {
+        const gift = gifts[id];
+        const overlay = document.getElementById("letterOverlay");
+
+        document.getElementById("letterEmoji").textContent = gift.emoji;
+        document.getElementById("letterTitle").textContent = gift.title;
+        document.getElementById("letterMessage").textContent = gift.message;
+        document.getElementById("letterWish").textContent = gift.wish;
+
+        overlay.classList.add("show");
+
+        // Store the choice in localStorage for tracking
+        localStorage.setItem("sarah_gift_choice", id);
+        localStorage.setItem("sarah_gift_timestamp", new Date().toISOString());
+
+        console.log("Sarah a choisi le cadeau #" + id);
+      }
+
+      function closeLetter() {
+        document.getElementById("letterOverlay").classList.remove("show");
+      }
+
+      // Check if there's a stored choice (for you to see what she chose)
+      const storedChoice = localStorage.getItem("sarah_gift_choice");
+      if (storedChoice) {
+        console.log("Sarah a choisi le cadeau #" + storedChoice);
+        console.log("Timestamp:", localStorage.getItem("sarah_gift_timestamp"));
+      }
+    </script>
+  </body>
+</html>
