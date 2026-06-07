@@ -429,11 +429,26 @@
         display: inline-block;
       }
       .cake {
-        width: 500px;
-        height: 500px;
-        border-radius: 20px;
-        object-fit: cover;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        width: 400px;
+        height: 400px;
+        font-size: 20rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 30px 60px rgba(255, 107, 157, 0.4));
+      }
+      .cake-emoji {
+        font-size: 15rem;
+        animation: cakeFloat 3s ease-in-out infinite;
+      }
+      @keyframes cakeFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
       }
       .candles {
         position: absolute;
@@ -452,74 +467,15 @@
         box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
       }
       .flame {
-        position: absolute;
-        top: -30px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 22px;
-        height: 30px;
-        background: linear-gradient(135deg, #ff6b9d, #ffd700, #ff9dce);
-        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-        animation: flicker 0.2s ease-in-out infinite alternate;
-        opacity: 0;
-        filter: blur(1.5px);
-        box-shadow:
-          0 0 30px rgba(255, 107, 157, 0.9),
-          0 0 60px rgba(255, 215, 0, 0.7),
-          0 0 90px rgba(255, 107, 157, 0.5);
-      }
-      .flame.lit {
-        opacity: 1;
-        animation:
-          flameAppear 0.5s ease forwards,
-          flicker 0.2s ease-in-out infinite alternate 0.5s;
-      }
-      .flame::before {
-        content: "";
-        position: absolute;
-        top: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 10px;
-        height: 15px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        filter: blur(3px);
-      }
-      @keyframes flameAppear {
-        0% {
-          transform: translateX(-50%) scale(0) rotate(0deg);
-          opacity: 0;
-        }
-        50% {
-          transform: translateX(-50%) scale(1.3) rotate(180deg);
-          opacity: 0.8;
-        }
-        100% {
-          transform: translateX(-50%) scale(1) rotate(360deg);
-          opacity: 1;
-        }
+        transform-origin: 50% 100%;
+        animation: flicker 0.3s ease-in-out infinite alternate;
       }
       @keyframes flicker {
-        0% {
-          transform: translateX(-50%) scale(1) rotate(-3deg);
-          opacity: 0.85;
+        from {
+          transform: scaleX(1) scaleY(1) rotate(-3deg);
         }
-        25% {
-          transform: translateX(-50%) scale(1.08) rotate(2deg);
-          opacity: 1;
-        }
-        50% {
-          transform: translateX(-50%) scale(0.92) rotate(-2deg);
-          opacity: 0.8;
-        }
-        75% {
-          transform: translateX(-50%) scale(1.05) rotate(3deg);
-          opacity: 0.95;
-        }
-        100% {
-          transform: translateX(-50%) scale(1) rotate(-3deg);
-          opacity: 0.85;
+        to {
+          transform: scaleX(0.82) scaleY(1.15) rotate(3deg);
         }
       }
       .blow-btn {
@@ -540,6 +496,58 @@
       .blow-btn:hover {
         background: rgba(255, 107, 157, 0.3);
         transform: scale(1.05);
+      }
+
+      /* ── FADE TO BLACK & RESTART ── */
+      .fade-overlay {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 2s ease;
+      }
+      .fade-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .restart-section {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 4000;
+        background: #000;
+      }
+      .restart-section.show {
+        display: flex;
+      }
+      .restart-btn {
+        background: linear-gradient(135deg, #ff6b9d, #ffd700);
+        border: none;
+        border-radius: 100px;
+        padding: 1.5rem 3rem;
+        color: #fff;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      .restart-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 20px 40px rgba(255, 107, 157, 0.6);
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
       }
 
       /* ── WISH POPUP ── */
@@ -807,7 +815,7 @@
     <!-- HERO -->
     <section class="hero">
       <img
-        src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780869924/photo_1_2026-06-07_22-13-49.jpg"
+        src="https://res.cloudinary.com/dlhevtzle/image/upload/v1780870512/photo_1_2026-06-07_22-13-49_ot5pqo.jpg"
         alt="Sarah"
         class="hero-photo"
       />
@@ -830,7 +838,7 @@
             <p class="timeline-date">Le début</p>
             <p class="timeline-text">
               Avant qu'on se connaisse, il y avait une seule chose dans ta vie.
-              L'école. 🤣🤣🤣🤣🤣🤣
+              L'école. 🤣🤣🤣🤣🤣🤣. Je vais changer ca madame
             </p>
           </div>
         </div>
@@ -843,8 +851,7 @@
           <div class="timeline-content">
             <p class="timeline-date">Ce soir-là</p>
             <p class="timeline-text">
-              Ce film qu'on a regardé ensemble — je m'en souviens moins que du
-              silence entre nous. Ce confort inattendu. Cette légèreté.
+              T'as la tête bien faite. Et ça, aucun examen peut te l'enlever ne laisse jamais rien ni personne te dire le contraire.
             </p>
           </div>
         </div>
@@ -885,8 +892,7 @@
           <div class="timeline-content">
             <p class="timeline-date">Aujourd'hui</p>
             <p class="timeline-text">
-              Le jour où j'ai voulu te dire, sans trop de mots, que tu comptes
-              pour moi. Plus que tu ne le penses.
+              Ce jour ou le soleil illuminé ton visage et tout la bauté en toi etait ressenti
             </p>
           </div>
         </div>
@@ -914,15 +920,15 @@
         <div class="message-card">
           <div class="message-icon">🌟</div>
           <p class="message-text">
-            Je te souhaite de trouver ce que tu cherches — et peut-être que tu
-            le trouveras plus près que tu ne le penses.
+            🌙 T'as une énergie que peu de gens ont. Le genre qui fait que les
+            gens autour de toi se sentent mieux sans savoir pourquoi.
           </p>
         </div>
         <div class="message-card">
           <div class="message-icon">💫</div>
           <p class="message-text">
-            Je ne sais pas encore ce qu'on sera. Mais je sais ce que je veux
-            essayer d'être pour toi : présent, vrai, constant.
+            🎯 Tu travailles en silence et ça se voit. Le bacc c'est juste une
+            formalité pour quelqu'un comme toi.
           </p>
         </div>
       </div>
@@ -999,17 +1005,365 @@
     </section>
 
     <!-- CAKE SECTION -->
+    <!-- CAKE SECTION -->
     <section class="cake-section" id="cakeSection" style="display: none">
-      <div class="cake-container">
-        <div class="cake-emoji">🎂</div>
-        <div class="candles" id="candles">
-          <div class="candle" id="candle1"><div class="flame"></div></div>
-          <div class="candle" id="candle2"><div class="flame"></div></div>
-          <div class="candle" id="candle3"><div class="flame"></div></div>
-          <div class="candle" id="candle4"><div class="flame"></div></div>
-          <div class="candle" id="candle5"><div class="flame"></div></div>
-        </div>
-      </div>
+      <svg
+        width="420"
+        height="400"
+        viewBox="0 0 420 400"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="tier1side" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#c8763a" />
+            <stop offset="100%" stop-color="#8b4513" />
+          </linearGradient>
+          <linearGradient id="tier2side" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d4853f" />
+            <stop offset="100%" stop-color="#9a5020" />
+          </linearGradient>
+          <linearGradient id="frosting1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff8f5" />
+            <stop offset="100%" stop-color="#f5e6da" />
+          </linearGradient>
+          <linearGradient id="frosting2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff9f7" />
+            <stop offset="100%" stop-color="#f8ede5" />
+          </linearGradient>
+          <linearGradient id="plateGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#e8e0d8" />
+            <stop offset="100%" stop-color="#c8bfb5" />
+          </linearGradient>
+          <linearGradient id="candleGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#e8a0bc" />
+            <stop offset="50%" stop-color="#f4c0d4" />
+            <stop offset="100%" stop-color="#d08090" />
+          </linearGradient>
+          <radialGradient id="gemRose" cx="35%" cy="30%">
+            <stop offset="0%" stop-color="#ffb3d9" />
+            <stop offset="40%" stop-color="#ff6b9d" />
+            <stop offset="100%" stop-color="#c0305a" />
+          </radialGradient>
+          <radialGradient id="gemGold" cx="35%" cy="30%">
+            <stop offset="0%" stop-color="#fff7b0" />
+            <stop offset="40%" stop-color="#ffd700" />
+            <stop offset="100%" stop-color="#b8860b" />
+          </radialGradient>
+          <radialGradient id="gemPurple" cx="35%" cy="30%">
+            <stop offset="0%" stop-color="#e0b0ff" />
+            <stop offset="40%" stop-color="#bf5af2" />
+            <stop offset="100%" stop-color="#7b2fb5" />
+          </radialGradient>
+          <radialGradient id="gemTeal" cx="35%" cy="30%">
+            <stop offset="0%" stop-color="#a0ffea" />
+            <stop offset="40%" stop-color="#00d4aa" />
+            <stop offset="100%" stop-color="#007a62" />
+          </radialGradient>
+          <radialGradient id="gemRed" cx="35%" cy="30%">
+            <stop offset="0%" stop-color="#ffb0a0" />
+            <stop offset="40%" stop-color="#ff4444" />
+            <stop offset="100%" stop-color="#990000" />
+          </radialGradient>
+        </defs>
+
+        <!-- Assiette -->
+        <ellipse
+          cx="210"
+          cy="358"
+          rx="178"
+          ry="18"
+          fill="url(#plateGrad)"
+          stroke="#b0a090"
+          stroke-width="1"
+        />
+        <ellipse cx="210" cy="354" rx="170" ry="12" fill="#d8d0c8" />
+
+        <!-- Étage bas -->
+        <ellipse cx="212" cy="352" rx="155" ry="10" fill="rgba(0,0,0,0.25)" />
+        <rect
+          x="58"
+          y="248"
+          width="304"
+          height="104"
+          rx="4"
+          fill="url(#tier1side)"
+        />
+        <rect
+          x="58"
+          y="260"
+          width="304"
+          height="92"
+          rx="3"
+          fill="rgba(255,255,255,0.06)"
+        />
+        <line
+          x1="58"
+          y1="275"
+          x2="362"
+          y2="275"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="58"
+          y1="295"
+          x2="362"
+          y2="295"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="58"
+          y1="315"
+          x2="362"
+          y2="315"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="58"
+          y1="335"
+          x2="362"
+          y2="335"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <ellipse cx="210" cy="248" rx="152" ry="16" fill="#e09050" />
+        <ellipse cx="210" cy="245" rx="154" ry="17" fill="url(#frosting1)" />
+        <path
+          d="M75 248 Q78 268 74 278 Q82 262 88 248"
+          fill="#fff8f5"
+          opacity="0.9"
+        />
+        <path
+          d="M108 246 Q111 266 108 275 Q116 260 122 246"
+          fill="#fff8f5"
+          opacity="0.85"
+        />
+        <path
+          d="M142 245 Q145 265 141 273 Q149 258 155 245"
+          fill="#fff8f5"
+          opacity="0.9"
+        />
+        <path
+          d="M176 245 Q179 264 175 272 Q183 258 189 245"
+          fill="#fff8f5"
+          opacity="0.85"
+        />
+        <path
+          d="M210 244 Q213 263 209 271 Q217 257 223 244"
+          fill="#fff8f5"
+          opacity="0.9"
+        />
+        <path
+          d="M243 245 Q246 264 242 272 Q250 258 256 245"
+          fill="#fff8f5"
+          opacity="0.85"
+        />
+        <path
+          d="M276 246 Q279 265 275 273 Q283 259 288 246"
+          fill="#fff8f5"
+          opacity="0.9"
+        />
+        <path
+          d="M308 248 Q311 267 307 276 Q315 262 320 248"
+          fill="#fff8f5"
+          opacity="0.85"
+        />
+        <path
+          d="M336 250 Q339 269 335 278 Q343 264 348 250"
+          fill="#fff8f5"
+          opacity="0.9"
+        />
+        <text
+          x="210"
+          y="328"
+          text-anchor="middle"
+          font-family="Georgia,serif"
+          font-size="28"
+          font-weight="bold"
+          fill="#5a2800"
+          opacity="0.35"
+          letter-spacing="5"
+        >
+          SARAH
+        </text>
+        <text
+          x="210"
+          y="327"
+          text-anchor="middle"
+          font-family="Georgia,serif"
+          font-size="28"
+          font-weight="bold"
+          fill="#ff6b9d"
+          opacity="0.85"
+          letter-spacing="5"
+        >
+          SARAH
+        </text>
+
+        <!-- Étage haut -->
+        <rect
+          x="122"
+          y="162"
+          width="176"
+          height="86"
+          rx="4"
+          fill="url(#tier2side)"
+        />
+        <rect
+          x="122"
+          y="172"
+          width="176"
+          height="76"
+          rx="3"
+          fill="rgba(255,255,255,0.06)"
+        />
+        <line
+          x1="122"
+          y1="180"
+          x2="298"
+          y2="180"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="122"
+          y1="200"
+          x2="298"
+          y2="200"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="122"
+          y1="220"
+          x2="298"
+          y2="220"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <line
+          x1="122"
+          y1="238"
+          x2="298"
+          y2="238"
+          stroke="rgba(0,0,0,0.08)"
+          stroke-width="1"
+        />
+        <ellipse cx="210" cy="162" rx="88" ry="12" fill="#e09050" />
+        <ellipse cx="210" cy="159" rx="90" ry="13" fill="url(#frosting2)" />
+        <path
+          d="M135 162 Q138 178 134 186 Q141 172 147 162"
+          fill="#fff9f7"
+          opacity="0.9"
+        />
+        <path
+          d="M163 160 Q166 176 163 183 Q170 169 176 160"
+          fill="#fff9f7"
+          opacity="0.85"
+        />
+        <path
+          d="M192 159 Q195 175 191 182 Q198 168 204 159"
+          fill="#fff9f7"
+          opacity="0.9"
+        />
+        <path
+          d="M220 159 Q223 175 219 182 Q227 168 233 159"
+          fill="#fff9f7"
+          opacity="0.85"
+        />
+        <path
+          d="M248 160 Q251 176 247 183 Q255 169 261 160"
+          fill="#fff9f7"
+          opacity="0.9"
+        />
+        <path
+          d="M274 162 Q277 178 273 186 Q280 172 286 162"
+          fill="#fff9f7"
+          opacity="0.85"
+        />
+
+        <!-- Bougies -->
+        <rect
+          x="144"
+          y="112"
+          width="12"
+          height="47"
+          rx="5"
+          fill="url(#candleGrad)"
+          stroke="#c07080"
+          stroke-width="0.5"
+        />
+        <rect
+          x="166"
+          y="104"
+          width="12"
+          height="55"
+          rx="5"
+          fill="url(#candleGrad)"
+          stroke="#c07080"
+          stroke-width="0.5"
+        />
+        <rect
+          x="194"
+          y="100"
+          width="12"
+          height="59"
+          rx="5"
+          fill="url(#candleGrad)"
+          stroke="#c07080"
+          stroke-width="0.5"
+        />
+        <rect
+          x="222"
+          y="104"
+          width="12"
+          height="55"
+          rx="5"
+          fill="url(#candleGrad)"
+          stroke="#c07080"
+          stroke-width="0.5"
+        />
+        <rect
+          x="250"
+          y="112"
+          width="12"
+          height="47"
+          rx="5"
+          fill="url(#candleGrad)"
+          stroke="#c07080"
+          stroke-width="0.5"
+        />
+
+        <!-- Flammes -->
+        <g class="flame" id="fl1">
+          <ellipse cx="150" cy="82" rx="5.5" ry="9" fill="#ff6a00" />
+          <ellipse cx="150" cy="84.5" rx="3.5" ry="6" fill="#ffcc00" />
+          <ellipse cx="150" cy="87" rx="1.8" ry="3" fill="#fff9c4" />
+        </g>
+        <g class="flame" id="fl2">
+          <ellipse cx="172" cy="72" rx="5.5" ry="9" fill="#ff6a00" />
+          <ellipse cx="172" cy="74.5" rx="3.5" ry="6" fill="#ffcc00" />
+          <ellipse cx="172" cy="77" rx="1.8" ry="3" fill="#fff9c4" />
+        </g>
+        <g class="flame" id="fl3">
+          <ellipse cx="200" cy="66" rx="5.5" ry="9" fill="#ff6a00" />
+          <ellipse cx="200" cy="68.5" rx="3.5" ry="6" fill="#ffcc00" />
+          <ellipse cx="200" cy="71" rx="1.8" ry="3" fill="#fff9c4" />
+        </g>
+        <g class="flame" id="fl4">
+          <ellipse cx="228" cy="72" rx="5.5" ry="9" fill="#ff6a00" />
+          <ellipse cx="228" cy="74.5" rx="3.5" ry="6" fill="#ffcc00" />
+          <ellipse cx="228" cy="77" rx="1.8" ry="3" fill="#fff9c4" />
+        </g>
+        <g class="flame" id="fl5">
+          <ellipse cx="256" cy="82" rx="5.5" ry="9" fill="#ff6a00" />
+          <ellipse cx="256" cy="84.5" rx="3.5" ry="6" fill="#ffcc00" />
+          <ellipse cx="256" cy="87" rx="1.8" ry="3" fill="#fff9c4" />
+        </g>
+      </svg>
+
       <button
         class="blow-btn"
         id="blowBtn"
@@ -1041,6 +1395,16 @@
         <p class="error-message" id="errorMessage"></p>
         <button class="error-close" onclick="closeError()">OK</button>
       </div>
+    </div>
+
+    <!-- FADE OVERLAY -->
+    <div class="fade-overlay" id="fadeOverlay"></div>
+
+    <!-- RESTART SECTION -->
+    <div class="restart-section" id="restartSection">
+      <button class="restart-btn" onclick="restartExperience()">
+        Recommencer l'expérience ✨
+      </button>
     </div>
 
     <script>
@@ -1266,16 +1630,35 @@
 
       // ── BLOW CANDLES ──
       function blowCandles() {
-        const flames = document.querySelectorAll(".flame");
-        flames.forEach((flame) => {
-          flame.classList.remove("lit");
+        const flameIds = ["fl1", "fl2", "fl3", "fl4", "fl5"];
+        flameIds.forEach((id, i) => {
+          setTimeout(() => {
+            const el = document.getElementById(id);
+            el.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+            el.style.transform =
+              "translateX(22px) scaleX(2.5) scaleY(0.2) rotate(30deg)";
+            el.style.opacity = "0";
+            setTimeout(() => {
+              el.style.display = "none";
+            }, 280);
+          }, i * 70);
         });
 
         document.getElementById("blowBtn").style.display = "none";
 
         setTimeout(() => {
-          alert("🎂 Joyeux anniversaire Sarah ! 🎂");
-        }, 500);
+          const fadeOverlay = document.getElementById("fadeOverlay");
+          fadeOverlay.classList.add("active");
+          setTimeout(() => {
+            document.getElementById("restartSection").classList.add("show");
+          }, 2500);
+        }, 600);
+      }
+
+      // ── RESTART EXPERIENCE ──
+      function restartExperience() {
+        // Reload the page to reset everything
+        location.reload();
       }
 
       // ── CHECK STORED DATA ──
