@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Joyeux Anniversaire Sarah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04020f;
+  --rose:#ff6b9d;
+  --gold:#ffd700;
+  --violet:#bf5af2;
+  --teal:#00d4ff;
+  --text:rgba(255,255,255,0.92);
+  --muted:rgba(255,255,255,0.45);
+  --hint:rgba(255,255,255,0.15);
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.1);
+}
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSEUR ── */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--rose);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,background 0.3s;
+  mix-blend-mode:screen;
+}
+#cursor-trail{
+  position:fixed;width:32px;height:32px;
+  border:1px solid rgba(255,107,157,0.4);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:left 0.12s ease,top 0.12s ease,width 0.3s,height 0.3s,border-color 0.3s;
+}
+
+/* ── CANVAS LAYERS ── */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#particleCanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+/* ── SCREENS ── */
+.screen{
+  position:relative;z-index:10;
+  min-height:100vh;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2rem 1.5rem;
+}
+.screen.active{display:flex}
+
+/* ── TRANSITIONS ── */
+.fade-in{animation:fadeIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards}
+.fade-out{animation:fadeOut 0.4s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
+
+/* ── SPLASH ── */
+#splash{text-align:center;gap:0}
+.splash-eyebrow{
+  font-size:11px;font-weight:500;
+  letter-spacing:0.3em;color:var(--rose);
+  text-transform:uppercase;
+  margin-bottom:2rem;opacity:0;
+  animation:slideUp 0.7s 0.5s forwards;
+}
+.splash-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(5rem,18vw,11rem);
+  font-weight:300;line-height:0.9;
+  background:linear-gradient(135deg,#fff 0%,#ff6b9d 40%,#ffd700 70%,#bf5af2 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:1rem;
+  filter:drop-shadow(0 0 40px rgba(255,107,157,0.4));
+}
+.splash-name span{
+  display:inline-block;opacity:0;
+  transform:translateY(60px) rotate(-3deg);
+  animation:letterBurst 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.splash-date{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-style:italic;
+  color:var(--muted);margin-bottom:3.5rem;
+  opacity:0;animation:slideUp 0.7s 1.6s forwards;
+}
+.btn-glow{
+  display:inline-flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(191,90,242,0.15));
+  border:1px solid rgba(255,107,157,0.5);
+  border-radius:100px;padding:16px 42px;
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:400;color:#fff;letter-spacing:0.1em;
+  cursor:none;opacity:0;animation:slideUp 0.7s 2s forwards;
+  transition:all 0.3s;position:relative;overflow:hidden;
+}
+.btn-glow::before{
+  content:'';position:absolute;inset:-2px;
+  background:linear-gradient(135deg,#ff6b9d,#bf5af2,#ffd700);
+  border-radius:100px;z-index:-1;opacity:0;
+  transition:opacity 0.3s;
+}
+.btn-glow:hover{transform:scale(1.05);color:#fff;border-color:transparent}
+.btn-glow:hover::before{opacity:0.3}
+
+/* ── MENU ── */
+#menu{text-align:center;gap:0}
+.menu-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.25em;color:var(--rose);text-transform:uppercase;margin-bottom:0.5rem}
+.menu-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.8rem,5vw,2.8rem);
+  font-weight:300;color:#fff;margin-bottom:2.5rem;
+}
+.chapters{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:14px;max-width:500px;width:100%;
+}
+.chap-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:20px;padding:1.6rem 1.3rem;
+  cursor:none;text-align:left;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;overflow:hidden;
+}
+.chap-card::before{
+  content:'';position:absolute;
+  inset:0;border-radius:20px;opacity:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,107,157,0.12), transparent 70%);
+  transition:opacity 0.3s;
+}
+.chap-card:hover{
+  transform:translateY(-4px) scale(1.02);
+  border-color:rgba(255,107,157,0.4);
+}
+.chap-card:hover::before{opacity:1}
+.chap-card.done{border-color:rgba(255,215,0,0.35)}
+.chap-card.done .chap-badge{display:flex}
+.chap-badge{
+  display:none;position:absolute;top:10px;right:12px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(255,215,0,0.2);border:1px solid rgba(255,215,0,0.5);
+  align-items:center;justify-content:center;
+  font-size:10px;color:var(--gold);
+}
+.chap-emoji{font-size:1.8rem;margin-bottom:0.9rem;display:block}
+.chap-num{font-size:10px;font-weight:500;letter-spacing:0.2em;color:var(--rose);text-transform:uppercase;margin-bottom:4px}
+.chap-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#fff;margin-bottom:4px}
+.chap-sub{font-size:11px;color:var(--muted);line-height:1.5}
+.progress-row{display:flex;gap:8px;justify-content:center;margin-top:2rem}
+.pdot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--hint);transition:all 0.5s;
+}
+.pdot.active{background:var(--rose);box-shadow:0 0 8px var(--rose)}
+.pdot.done{background:var(--gold);box-shadow:0 0 8px rgba(255,215,0,0.6)}
+
+/* ── INNER SCREENS ── */
+.inner{max-width:560px;width:100%;display:flex;flex-direction:column}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:none;color:var(--muted);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  cursor:none;padding:0;margin-bottom:2.5rem;
+  transition:color 0.2s;align-self:flex-start;
+}
+.back-btn:hover{color:var(--text)}
+.chap-top{text-align:center;margin-bottom:2.5rem}
+.chap-top-emoji{font-size:2.2rem;margin-bottom:0.8rem;display:block}
+.chap-top-label{font-size:10px;font-weight:500;letter-spacing:0.22em;color:var(--rose);text-transform:uppercase;margin-bottom:0.5rem}
+.chap-top-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:600;color:#fff}
+
+/* ── CH1 SECRET ── */
+.lock-center{text-align:center;display:flex;flex-direction:column;align-items:center}
+.lock-anim{
+  font-size:4rem;margin-bottom:1.5rem;
+  animation:lockFloat 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 20px rgba(191,90,242,0.5));
+}
+@keyframes lockFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+.lock-verse{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;font-style:italic;color:var(--muted);
+  line-height:1.9;margin-bottom:2rem;max-width:340px;
+}
+.secret-field{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(191,90,242,0.3);
+  border-radius:14px;padding:16px 22px;
+  font-family:'DM Sans',sans-serif;font-size:16px;
+  color:#fff;width:100%;max-width:300px;
+  text-align:center;letter-spacing:0.2em;
+  outline:none;transition:all 0.3s;
+}
+.secret-field:focus{border-color:rgba(191,90,242,0.8);box-shadow:0 0 20px rgba(191,90,242,0.2)}
+.secret-field.error{border-color:rgba(255,107,157,0.8);animation:shake 0.4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.unlock-box{
+  display:none;margin-top:2rem;
+  background:linear-gradient(135deg,rgba(255,107,157,0.06),rgba(191,90,242,0.06));
+  border:1px solid rgba(255,107,157,0.2);
+  border-radius:20px;padding:2rem 2.2rem;text-align:left;
+}
+.unlock-box.show{display:block;animation:fadeIn 0.8s forwards}
+.unlock-body{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:300;
+  color:var(--text);line-height:1.95;margin-bottom:1.5rem;
+}
+.unlock-body em{color:var(--rose);font-style:normal;font-weight:400}
+
+/* ── CH2 ENVELOPPES ── */
+.env-list{display:flex;flex-direction:column;gap:12px}
+.env{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;overflow:hidden;cursor:none;
+  transition:border-color 0.3s;
+}
+.env:hover{border-color:rgba(255,107,157,0.3)}
+.env.open{border-color:rgba(255,107,157,0.25)}
+.env-head{
+  display:flex;align-items:center;gap:14px;
+  padding:1.1rem 1.4rem;
+}
+.env-ico{font-size:1.5rem;flex-shrink:0}
+.env-label{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:#fff;flex:1}
+.env-chev{
+  color:var(--muted);font-size:20px;flex-shrink:0;
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),color 0.3s;
+}
+.env.open .env-chev{transform:rotate(90deg);color:var(--rose)}
+.env-body{max-height:0;overflow:hidden;transition:max-height 0.5s ease}
+.env.open .env-body{max-height:500px}
+.env-text{
+  padding:0 1.4rem 1.4rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding-top:1.2rem;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;font-weight:300;
+  color:var(--text);line-height:1.9;
+}
+.env-text em{color:var(--rose);font-style:normal}
+
+/* ── CH3 QUIZ ── */
+.qbar-wrap{width:100%;height:2px;background:var(--hint);border-radius:2px;margin-bottom:2.5rem;overflow:hidden}
+.qbar-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--violet));border-radius:2px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+.q-num{font-size:10px;font-weight:500;letter-spacing:0.2em;color:var(--rose);text-transform:uppercase;margin-bottom:0.8rem}
+.q-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.2rem,4vw,1.6rem);
+  font-weight:400;color:#fff;line-height:1.45;margin-bottom:1.5rem;
+}
+.q-input{
+  width:100%;min-height:110px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,107,157,0.2);
+  border-radius:16px;padding:1rem 1.2rem;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;font-weight:300;
+  color:#fff;resize:none;outline:none;
+  transition:border-color 0.3s,box-shadow 0.3s;line-height:1.75;
+}
+.q-input:focus{border-color:rgba(255,107,157,0.6);box-shadow:0 0 20px rgba(255,107,157,0.1)}
+.q-input::placeholder{color:var(--hint)}
+.q-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;
+  border:1px solid rgba(255,107,157,0.4);
+  border-radius:100px;padding:13px 30px;
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--rose);cursor:none;margin-top:1rem;
+  transition:all 0.3s;letter-spacing:0.06em;
+}
+.q-btn:hover:not(:disabled){background:rgba(255,107,157,0.1);color:#fff;transform:scale(1.02)}
+.q-btn:disabled{opacity:0.35;cursor:not-allowed}
+.ai-box{
+  display:none;margin-top:1.5rem;
+  background:linear-gradient(135deg,rgba(255,107,157,0.06),rgba(191,90,242,0.06));
+  border:1px solid rgba(191,90,242,0.2);
+  border-radius:16px;padding:1.3rem 1.5rem;
+}
+.ai-box.show{display:block;animation:fadeIn 0.6s forwards}
+.ai-tag{font-size:10px;font-weight:500;letter-spacing:0.2em;color:var(--violet);text-transform:uppercase;margin-bottom:0.6rem}
+.ai-msg{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;color:var(--text);line-height:1.85}
+.thinking{display:inline-flex;gap:5px;align-items:center}
+.thinking span{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--violet);
+  animation:think 1.4s ease-in-out infinite;
+}
+.thinking span:nth-child(2){animation-delay:0.2s}
+.thinking span:nth-child(3){animation-delay:0.4s}
+@keyframes think{0%,100%{opacity:0.2;transform:scale(0.7)}50%{opacity:1;transform:scale(1)}}
+
+/* ── CH4 TIMELINE ── */
+.tl{position:relative;padding-left:2.2rem}
+.tl::before{
+  content:'';position:absolute;
+  left:8px;top:10px;bottom:10px;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(255,107,157,0.4),rgba(255,215,0,0.4),transparent);
+}
+.tl-item{
+  position:relative;margin-bottom:2.2rem;
+  opacity:0;transform:translateX(-16px);
+  transition:opacity 0.6s,transform 0.6s cubic-bezier(0.34,1.2,0.64,1);
+}
+.tl-item.vis{opacity:1;transform:translateX(0)}
+.tl-node{
+  position:absolute;left:-1.9rem;top:3px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--bg);
+  border:1px solid rgba(255,107,157,0.3);
+  transition:all 0.5s;
+}
+.tl-item.vis .tl-node{
+  border-color:var(--rose);
+  box-shadow:0 0 12px rgba(255,107,157,0.5);
+  background:rgba(255,107,157,0.15);
+}
+.tl-item:last-child .tl-node{border-color:var(--gold)}
+.tl-item:last-child.vis .tl-node{
+  border-color:var(--gold);
+  box-shadow:0 0 14px rgba(255,215,0,0.6);
+  background:rgba(255,215,0,0.15);
+}
+.tl-when{font-size:11px;font-weight:500;letter-spacing:0.14em;color:var(--rose);text-transform:uppercase;margin-bottom:4px}
+.tl-item:last-child .tl-when{color:var(--gold)}
+.tl-what{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:5px}
+.tl-how{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:300;color:var(--muted);line-height:1.75}
+.tl-how em{color:var(--text);font-style:normal}
+
+/* ── FINAL ── */
+#final{text-align:center}
+#fwCanvas{position:fixed;inset:0;z-index:5;pointer-events:none}
+.final-glow{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,8vw,5rem);
+  font-weight:300;color:#fff;line-height:1.1;
+  margin-bottom:1.2rem;
+  background:linear-gradient(135deg,#fff 0%,#ff6b9d 50%,#ffd700 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,107,157,0.5));
+}
+.final-verse{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:300;font-style:italic;
+  color:var(--muted);max-width:380px;line-height:1.85;
+  margin:0 auto 2.5rem;
+}
+.final-sig{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--rose)}
+
+/* ── BTN RETOUR ── */
+.btn-back{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;
+  border:1px solid rgba(255,107,157,0.35);
+  border-radius:100px;padding:13px 30px;
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--rose);cursor:none;margin-top:1.5rem;
+  transition:all 0.3s;letter-spacing:0.06em;
+}
+.btn-back:hover{background:rgba(255,107,157,0.1);color:#fff;transform:scale(1.02)}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes letterBurst{to{opacity:1;transform:translateY(0) rotate(0deg)}}
+
+@media(max-width:480px){.chapters{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<canvas id="bgCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
+<canvas id="fwCanvas" style="display:none"></canvas>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <p class="splash-eyebrow">Une surprise pour toi 🎂</p>
+  <h1 class="splash-name" id="sName"></h1>
+  <p class="splash-date">aujourd'hui, c'est ta journée</p>
+  <button class="btn-glow" onclick="goTo('menu')">
+    Ouvrir ton cadeau ✨
+  </button>
+</div>
+
+<!-- MENU -->
+<div class="screen" id="menu">
+  <p class="menu-eyebrow">ton cadeau t'attend</p>
+  <h2 class="menu-title">Par où veux-tu commencer ?</h2>
+  <div class="chapters">
+    <div class="chap-card" id="cc0" onclick="goTo('ch1')">
+      <span class="chap-badge">✓</span>
+      <span class="chap-emoji">🔐</span>
+      <p class="chap-num">Chapitre I</p>
+      <p class="chap-name">Le secret</p>
+      <p class="chap-sub">Un mot pour tout déverrouiller</p>
+    </div>
+    <div class="chap-card" id="cc1" onclick="goTo('ch2')">
+      <span class="chap-badge">✓</span>
+      <span class="chap-emoji">💌</span>
+      <p class="chap-num">Chapitre II</p>
+      <p class="chap-name">Chapitres</p>
+      <p class="chap-sub">Des enveloppes à ouvrir une par une</p>
+    </div>
+    <div class="chap-card" id="cc2" onclick="goTo('ch3')">
+      <span class="chap-badge">✓</span>
+      <span class="chap-emoji">🎯</span>
+      <p class="chap-num">Chapitre III</p>
+      <p class="chap-name">Nous deux</p>
+      <p class="chap-sub">Des questions qui parlent de toi</p>
+    </div>
+    <div class="chap-card" id="cc3" onclick="goTo('ch4')">
+      <span class="chap-badge">✓</span>
+      <span class="chap-emoji">✨</span>
+      <p class="chap-num">Chapitre IV</p>
+      <p class="chap-name">Histoire</p>
+      <p class="chap-sub">Notre histoire, moment par moment</p>
+    </div>
+  </div>
+  <div class="progress-row">
+    <div class="pdot" id="pd0"></div>
+    <div class="pdot" id="pd1"></div>
+    <div class="pdot" id="pd2"></div>
+    <div class="pdot" id="pd3"></div>
+  </div>
+</div>
+
+<!-- CH1 -->
+<div class="screen" id="ch1">
+  <div class="inner">
+    <button class="back-btn" onclick="goTo('menu')">← Retour</button>
+    <div class="chap-top">
+      <span class="chap-top-emoji">🔐</span>
+      <p class="chap-top-label">Chapitre I</p>
+      <h2 class="chap-top-title">Le secret</h2>
+    </div>
+    <div class="lock-center">
+      <span class="lock-anim" id="lockEmoji">🔒</span>
+      <p class="lock-verse">
+        Il y a un mot entre nous —<br>
+        une série, une promesse, un avenir.<br>
+        Tu le connais. Tape-le.
+      </p>
+      <input class="secret-field" id="secretIn" type="text" placeholder="ton mot secret..." autocomplete="off" oninput="trySecret(this)">
+      <div class="unlock-box" id="unlockBox">
+        <p class="unlock-body">
+          <em>Peaky Blinders.</em><br><br>
+          Ce n'est pas juste une série —<br>
+          c'est une promesse qu'on s'est faite sans se le dire.<br>
+          Une prochaine soirée, un écran, toi à côté.<br><br>
+          J'attends ce moment comme on attend quelque chose de rare.<br>
+          Parce que toi, Sarah — tu es quelque chose de rare.
+        </p>
+        <button class="btn-back" onclick="markDone(0);goTo('menu')">Retour au menu →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CH2 -->
+<div class="screen" id="ch2">
+  <div class="inner">
+    <button class="back-btn" onclick="goTo('menu')">← Retour</button>
+    <div class="chap-top">
+      <span class="chap-top-emoji">💌</span>
+      <p class="chap-top-label">Chapitre II</p>
+      <h2 class="chap-top-title">Chapitres</h2>
+    </div>
+    <div class="env-list">
+      <div class="env" onclick="toggleEnv(this)">
+        <div class="env-head"><span class="env-ico">🌙</span><span class="env-label">Ce que j'aime chez toi</span><span class="env-chev">›</span></div>
+        <div class="env-body"><div class="env-text">Tu danses comme si personne ne regarde —<br>et quand tu le fais, tout le monde regarde.<br>Tu portes la musique en toi d'une façon que les gens ressentent<br>avant même que tu n'ouvres la bouche.<br><br>C'est ça qui m'a eu.</div></div>
+      </div>
+      <div class="env" onclick="toggleEnv(this)">
+        <div class="env-head"><span class="env-ico">🎬</span><span class="env-label">Ce soir-là</span><span class="env-chev">›</span></div>
+        <div class="env-body"><div class="env-text">Ce film qu'on a regardé ensemble —<br>je m'en souviens moins que du silence entre nous.<br>Ce confort inattendu. Cette légèreté.<br><br><em>Ce sont les petits moments qui font les grandes histoires.</em></div></div>
+      </div>
+      <div class="env" onclick="toggleEnv(this)">
+        <div class="env-head"><span class="env-ico">🌟</span><span class="env-label">Ce que je te souhaite</span><span class="env-chev">›</span></div>
+        <div class="env-body"><div class="env-text">Que cette année soit à ta mesure.<br>Que ta danse trouve les bonnes scènes.<br>Que ta musique trouve les bonnes oreilles.<br>Que tu trouves ce que tu cherches —<br><br><em>et peut-être que tu le trouveras plus près que tu ne le penses.</em></div></div>
+      </div>
+      <div class="env" onclick="toggleEnv(this)">
+        <div class="env-head"><span class="env-ico">💫</span><span class="env-label">Ma promesse</span><span class="env-chev">›</span></div>
+        <div class="env-body"><div class="env-text">Je ne sais pas encore ce qu'on sera.<br>Mais je sais ce que je veux essayer d'être pour toi.<br>Quelqu'un de présent. De vrai. De constant.<br><br><em>Et oui — on finira Peaky Blinders ensemble.</em></div></div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn-back" onclick="markDone(1);goTo('menu')">Retour au menu →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CH3 -->
+<div class="screen" id="ch3">
+  <div class="inner quiz-wrap" style="max-width:560px;width:100%">
+    <button class="back-btn" onclick="goTo('menu')">← Retour</button>
+    <div class="chap-top">
+      <span class="chap-top-emoji">🎯</span>
+      <p class="chap-top-label">Chapitre III</p>
+      <h2 class="chap-top-title">Nous deux</h2>
+    </div>
+    <div class="qbar-wrap"><div class="qbar-fill" id="qBar" style="width:0%"></div></div>
+    <div id="qZone"></div>
+  </div>
+</div>
+
+<!-- CH4 -->
+<div class="screen" id="ch4">
+  <div class="inner">
+    <button class="back-btn" onclick="goTo('menu')">← Retour</button>
+    <div class="chap-top">
+      <span class="chap-top-emoji">✨</span>
+      <p class="chap-top-label">Chapitre IV</p>
+      <h2 class="chap-top-title">Histoire</h2>
+    </div>
+    <div class="tl" id="tlWrap">
+      <div class="tl-item"><div class="tl-node"></div><p class="tl-when">Le début</p><p class="tl-what">La première fois</p><p class="tl-how">Avant qu'on se connaisse vraiment —<br>il y avait déjà <em>quelque chose</em>.</p></div>
+      <div class="tl-item"><div class="tl-node"></div><p class="tl-when">Récemment</p><p class="tl-what">Ce film ensemble</p><p class="tl-how">Un écran, une soirée, un silence qui ne pesait pas.<br><em>Le genre de moment qu'on n'oublie pas.</em></p></div>
+      <div class="tl-item"><div class="tl-node"></div><p class="tl-when">Aujourd'hui</p><p class="tl-what">Ton anniversaire</p><p class="tl-how">Le jour où j'ai voulu te dire, sans trop de mots,<br><em>que tu comptes pour moi.</em></p></div>
+      <div class="tl-item"><div class="tl-node"></div><p class="tl-when">Bientôt</p><p class="tl-what">Peaky Blinders</p><p class="tl-how">Une promesse qu'on a faite sans se le dire.<br><em>J'attends ce soir-là.</em></p></div>
+      <div class="tl-item"><div class="tl-node"></div><p class="tl-when">La suite...</p><p class="tl-what">Ce qu'on n'a pas encore vécu</p><p class="tl-how"><em>Cette page est encore blanche.</em><br>J'aimerais qu'on l'écrive ensemble.</p></div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn-back" onclick="markDone(3);checkAll();goTo('menu')">Retour au menu →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div class="screen" id="final">
+  <p style="font-size:3.5rem;margin-bottom:1.5rem;filter:drop-shadow(0 0 20px rgba(255,215,0,0.6))">🎂</p>
+  <h2 class="final-glow">Joyeux anniversaire,<br>Sarah.</h2>
+  <p class="final-verse">
+    Tu as tout exploré. Tu as tout ouvert.<br>
+    J'espère que tu as souri au moins une fois.<br>
+    J'espère surtout que tu as compris<br>ce que je n'ai pas encore su dire à voix haute.
+  </p>
+  <p class="final-sig">— avec tout ce que j'ai ✨</p>
+  <button class="btn-back" onclick="goTo('menu')" style="margin-top:2rem">Revoir les chapitres</button>
+</div>
+
+<script>
+// ── CONFIG ──
+const NAME="Sarah", SECRET="peakyblinders";
+const QUESTIONS=[
+  {q:"Un date parfait pour toi, c'est quoi ?",ph:"Décris ta soirée idéale..."},
+  {q:"Si tu pouvais faire un vœu là, maintenant — lequel serait-il ?",ph:"Ce que tu désires le plus..."},
+  {q:"La musique dans ta vie, c'est quoi pour toi ?",ph:"Ce que ça représente vraiment..."},
+  {q:"Si tu devais décrire ce que tu cherches chez quelqu'un, en quelques mots ?",ph:"Ce qui compte vraiment pour toi..."}
+];
+let qIdx=0, done=[false,false,false,false];
+
+// ── CURSEUR ──
+const cur=document.getElementById('cursor'),trail=document.getElementById('cursor-trail');
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  setTimeout(()=>{trail.style.left=mx+'px';trail.style.top=my+'px'},60);
+});
+document.addEventListener('mousedown',()=>{cur.style.transform='translate(-50%,-50%) scale(1.8)';cur.style.background='var(--gold)'});
+document.addEventListener('mouseup',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';cur.style.background='var(--rose)'});
+
+// Card hover glow
+document.querySelectorAll('.chap-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+
+// ── BG CANVAS (aurora + stars) ──
+const bgC=document.getElementById('bgCanvas');
+const bgX=bgC.getContext('2d');
+let W=0,H=0,stars=[],auroraPts=[];
+
+function resize(){
+  W=bgC.width=window.innerWidth;
+  H=bgC.height=window.innerHeight;
+  initBg();
+}
+
+function initBg(){
+  stars=[];
+  for(let i=0;i<200;i++){
+    stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+0.2,a:Math.random(),spd:0.003+Math.random()*0.008});
+  }
+  auroraPts=[];
+  for(let i=0;i<5;i++){
+    auroraPts.push({x:Math.random()*W,y:H*0.2+Math.random()*H*0.3,vy:0.2+Math.random()*0.4,amp:60+Math.random()*80,freq:0.5+Math.random()*0.5,phase:Math.random()*Math.PI*2,hue:Math.random()*60+280});
+  }
+}
+
+let tick=0;
+function drawBg(){
+  bgX.fillStyle='rgba(4,2,15,0.18)';
+  bgX.fillRect(0,0,W,H);
+  tick+=0.008;
+
+  // Stars
+  stars.forEach(s=>{
+    s.a+=s.spd;
+    const alpha=Math.abs(Math.sin(s.a))*0.85+0.1;
+    bgX.beginPath();bgX.arc(s.x,s.y,s.r,0,Math.PI*2);
+    bgX.fillStyle=`rgba(255,255,255,${alpha})`;bgX.fill();
+  });
+
+  // Aurora bands
+  auroraPts.forEach((p,i)=>{
+    bgX.save();
+    bgX.globalAlpha=0.018;
+    const grad=bgX.createLinearGradient(0,p.y-p.amp,0,p.y+p.amp);
+    grad.addColorStop(0,'transparent');
+    grad.addColorStop(0.5,`hsl(${p.hue+tick*20},80%,60%)`);
+    grad.addColorStop(1,'transparent');
+    bgX.fillStyle=grad;
+    bgX.beginPath();bgX.moveTo(0,H);
+    for(let x=0;x<=W;x+=20){
+      const y=p.y+Math.sin(x*0.006*p.freq+tick+p.phase)*p.amp;
+      bgX.lineTo(x,y);
+    }
+    bgX.lineTo(W,H);bgX.closePath();bgX.fill();
+    bgX.restore();
+    p.phase+=0.005;
+  });
+
+  requestAnimationFrame(drawBg);
+}
+window.addEventListener('resize',resize);
+resize();drawBg();
+
+// ── PARTICLES CANVAS ──
+const pC=document.getElementById('particleCanvas');
+const pX=pC.getContext('2d');
+let particles=[];
+
+function resizeP(){pC.width=window.innerWidth;pC.height=window.innerHeight}
+window.addEventListener('resize',resizeP);resizeP();
+
+function spawnParticle(x,y,burst=false){
+  const count=burst?30:1;
+  const colors=['#ff6b9d','#ffd700','#bf5af2','#00d4ff','#fff','#ff9dce'];
+  for(let i=0;i<count;i++){
+    const angle=burst?(Math.PI*2*i/count):(Math.random()*Math.PI*2);
+    const spd=burst?(2+Math.random()*6):(0.3+Math.random()*0.8);
+    particles.push({
+      x:x||Math.random()*pC.width,
+      y:y||pC.height+10,
+      vx:Math.cos(angle)*spd,
+      vy:burst?Math.sin(angle)*spd:(-0.8-Math.random()*1.2),
+      r:burst?(2+Math.random()*5):(1+Math.random()*2),
+      color:colors[Math.floor(Math.random()*colors.length)],
+      life:1,decay:burst?(0.015+Math.random()*0.02):(0.005+Math.random()*0.008)
+    });
+  }
+}
+
+setInterval(()=>{
+  if(particles.length<120)spawnParticle();
+},200);
+
+function drawParticles(){
+  pX.clearRect(0,0,pC.width,pC.height);
+  particles=particles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    p.vy-=0.02;p.life-=p.decay;
+    if(p.life<=0)return false;
+    pX.beginPath();pX.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pX.fillStyle=p.color;pX.globalAlpha=p.life*0.7;pX.fill();
+    pX.globalAlpha=1;
+    return true;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── SPLASH NAME ──
+(function(){
+  const el=document.getElementById('sName');
+  NAME.split('').forEach((c,i)=>{
+    const s=document.createElement('span');
+    s.textContent=c===' '?'\u00a0':c;
+    s.style.animationDelay=`${0.5+i*0.12}s`;
+    el.appendChild(s);
+  });
+})();
+
+// ── NAVIGATION ──
+function goTo(id){
+  const cur=document.querySelector('.screen.active');
+  if(cur){
+    cur.classList.add('fade-out');
+    setTimeout(()=>{
+      cur.classList.remove('active','fade-out');
+      activate(id);
+    },380);
+  } else activate(id);
+}
+function activate(id){
+  const el=document.getElementById(id);
+  el.classList.add('active','fade-in');
+  el.addEventListener('animationend',()=>el.classList.remove('fade-in'),{once:true});
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='ch3')renderQ();
+  if(id==='ch4')runTimeline();
+  if(id==='final'){showFW();document.getElementById('fwCanvas').style.display='block';}
+}
+
+// ── SECRET ──
+function trySecret(inp){
+  const v=inp.value.toLowerCase().replace(/\s/g,'');
+  if(v===SECRET){
+    inp.style.borderColor='rgba(255,215,0,0.8)';
+    inp.style.boxShadow='0 0 25px rgba(255,215,0,0.3)';
+    document.getElementById('lockEmoji').textContent='🔓';
+    document.getElementById('lockEmoji').style.filter='drop-shadow(0 0 20px rgba(255,215,0,0.7))';
+    document.getElementById('lockEmoji').style.animation='none';
+    const rect=inp.getBoundingClientRect();
+    spawnParticle(rect.left+rect.width/2, rect.top+rect.height/2, true);
+    setTimeout(()=>spawnParticle(rect.left+rect.width/2,rect.top+rect.height/2,true),300);
+    setTimeout(()=>{document.getElementById('unlockBox').classList.add('show')},500);
+    inp.disabled=true;
+  } else if(v.length>=SECRET.length){
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'),500);
+  }
+}
+
+// ── ENVELOPPES ──
+function toggleEnv(el){
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.env.open').forEach(e=>e.classList.remove('open'));
+  if(!was)el.classList.add('open');
+}
+
+// ── QUIZ ──
+function renderQ(){
+  if(qIdx>=QUESTIONS.length)return;
+  const el=document.getElementById('qZone');
+  document.getElementById('qBar').style.width=(qIdx/QUESTIONS.length*100)+'%';
+  el.innerHTML=`
+    <p class="q-num">Question ${qIdx+1} / ${QUESTIONS.length}</p>
+    <p class="q-text">${QUESTIONS[qIdx].q}</p>
+    <textarea class="q-input" id="qIn" placeholder="${QUESTIONS[qIdx].ph}"></textarea>
+    <button class="q-btn" id="qBtn" onclick="sendQ()">Envoyer ma réponse →</button>
+    <div class="ai-box" id="aBox">
+      <p class="ai-tag">✦ Pour toi</p>
+      <p class="ai-msg" id="aTxt"></p>
+    </div>`;
+}
+
+async function sendQ(){
+  const inp=document.getElementById('qIn');
+  const btn=document.getElementById('qBtn');
+  const box=document.getElementById('aBox');
+  const txt=document.getElementById('aTxt');
+  const ans=inp.value.trim();
+  if(!ans)return;
+  btn.disabled=true;btn.textContent='Je réfléchis...';
+  box.classList.add('show');
+  txt.innerHTML='<div class="thinking"><span></span><span></span><span></span></div>';
+
+  const prompt=`Tu es une présence douce et poétique dans une page d'anniversaire créée pour Sarah par quelqu'un qui a le béguin pour elle. Sarah vient de répondre à cette question : "${QUESTIONS[qIdx].q}". Sa réponse est : "${ans}". Écris une réaction courte (3-5 phrases) en français, style poétique et intime. Réagis vraiment à ce qu'elle a dit. Sois touchant, léger, avec une touche de mystère. Ne mentionne jamais que tu es une IA.`;
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const d=await r.json();
+    txt.textContent=d.content?.[0]?.text||'...';
+  }catch(e){
+    txt.textContent='Quelque chose d\'inattendu. Mais ta réponse valait la peine d\'être lue.';
+  }
+
+  setTimeout(()=>{
+    qIdx++;
+    const nb=document.createElement('button');
+    nb.className='q-btn';nb.style.marginTop='1rem';
+    if(qIdx<QUESTIONS.length){
+      nb.textContent='Question suivante →';
+      nb.onclick=renderQ;
+    } else {
+      document.getElementById('qBar').style.width='100%';
+      nb.textContent='Retour au menu →';
+      nb.onclick=()=>{markDone(2);goTo('menu')};
+    }
+    box.appendChild(nb);
+  },600);
+}
+
+// ── TIMELINE ──
+function runTimeline(){
+  document.querySelectorAll('.tl-item').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('vis'),i*300);
+  });
+}
+
+// ── PROGRESSION ──
+function markDone(i){
+  done[i]=true;
+  document.getElementById('cc'+i).classList.add('done');
+  document.getElementById('pd'+i).classList.add('done');
+  checkAll();
+}
+function checkAll(){
+  if(done.every(Boolean))setTimeout(()=>goTo('final'),700);
+}
+
+// ── FEUX D'ARTIFICE ──
+const fwC=document.getElementById('fwCanvas');
+const fwX=fwC.getContext('2d');
+let shells=[],fwRunning=false;
+
+function resizeFW(){fwC.width=window.innerWidth;fwC.height=window.innerHeight}
+window.addEventListener('resize',resizeFW);resizeFW();
+
+function launchShell(){
+  const x=fwC.width*0.2+Math.random()*fwC.width*0.6;
+  const y=fwC.height*0.15+Math.random()*fwC.height*0.4;
+  const hue=Math.random()*360;
+  const pts=[];
+  for(let i=0;i<80;i++){
+    const a=Math.PI*2*i/80;
+    const spd=3+Math.random()*5;
+    pts.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,life:1,r:1.5+Math.random()*2});
+  }
+  shells.push({pts,hue});
+}
+
+function drawFW(){
+  if(!fwRunning)return;
+  fwX.fillStyle='rgba(4,2,15,0.18)';fwX.fillRect(0,0,fwC.width,fwC.height);
+  shells=shells.filter(s=>{
+    s.pts=s.pts.filter(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.vx*=0.97;p.vy*=0.97;p.life-=0.016;
+      if(p.life<=0)return false;
+      fwX.beginPath();fwX.arc(p.x,p.y,p.r,0,Math.PI*2);
+      fwX.fillStyle=`hsla(${s.hue},100%,65%,${p.life})`;fwX.fill();
+      return true;
+    });
+    return s.pts.length>0;
+  });
+  requestAnimationFrame(drawFW);
+}
+
+function showFW(){
+  fwRunning=true;
+  fwC.style.display='block';
+  drawFW();
+  let launches=0;
+  const iv=setInterval(()=>{
+    launchShell();
+    if(Math.random()>0.6)launchShell();
+    launches++;
+    if(launches>18){clearInterval(iv);}
+  },350);
+  setTimeout(()=>{fwRunning=false;fwC.style.display='none'},9000);
+}
+</script>
+</body>
+</html>
