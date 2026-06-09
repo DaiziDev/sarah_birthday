@@ -903,7 +903,8 @@
     </audio>
     <div class="music-btn" id="musicBtn" onclick="playMusic()">🎵</div>
     <div class="volume-hint" id="volumeHint">
-      🔊 Augmente le volume de ton téléphone et appuie sur le bouton pour la musique !
+      🔊 Augmente le volume de ton téléphone et appuie sur le bouton pour la
+      musique !
     </div>
     <canvas id="particleCanvas"></canvas>
 
@@ -1477,11 +1478,37 @@
         <div class="wish-emoji">🎂</div>
         <h3 class="wish-title">Fais un vœu</h3>
         <p class="wish-subtitle">
-          Ce vœu est uniquement pour toi. Personne d'autre ne le connaîtra,
-          jamais. C'est ton secret à toi 💝
+          Ce vœu va être envoyé à quelqu'un de spécial 💝
         </p>
+        <input
+          type="text"
+          id="wishName"
+          placeholder="Ton prénom..."
+          style="
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 107, 157, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.95);
+            font-family: &quot;Cormorant Garamond&quot;, serif;
+            font-size: 1rem;
+            outline: none;
+          "
+        />
         <textarea id="wishInput" placeholder="Ton vœu secret..."></textarea>
         <button class="wish-send" onclick="sendWish()">Envoyer ✨</button>
+        <p
+          style="
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 1rem;
+            font-style: italic;
+          "
+        >
+          Tes données ne sont partagées avec personne d'autre
+        </p>
       </div>
     </div>
 
@@ -1774,20 +1801,106 @@
         }
       }
 
-      // ── WISH SYSTEM ──
+      // ── WISH SYSTEM (Formspree) ──
       function sendWish() {
+        console.log("=== DÉBUT DE sendWish() ===");
+
+        const wishName = document.getElementById("wishName").value.trim();
         const wish = document.getElementById("wishInput").value.trim();
-        if (wish) {
-          localStorage.setItem("sarah_wish", wish);
-          localStorage.setItem(
-            "sarah_wish_timestamp",
-            new Date().toISOString(),
-          );
-          console.log("Vœu de Sarah:", wish);
-          document.getElementById("wishPopup").classList.remove("show");
-        } else {
-          alert("Écris ton vœu d'abord 💝");
+
+        console.log("Prénom saisi:", wishName);
+        console.log("Vœu saisi:", wish);
+
+        if (!wishName) {
+          console.warn("❌ Aucun prénom fourni");
+          alert("Écris ton prénom d'abord 💝");
+          return;
         }
+        if (!wish) {
+          console.warn("❌ Aucun vœu fourni");
+          alert("Écris ton vœu d'abord 💝");
+          return;
+        }
+
+        const wishButton = event.target;
+        wishButton.disabled = true;
+        wishButton.textContent = "Envoi en cours...";
+
+        console.log("📧 Envoi du vœu via Formspree...");
+
+        // Send via Formspree
+        fetch("https://formspree.io/f/xkoarqqw", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: wishName,
+            message: wish,
+            time: new Date().toLocaleString("fr-FR"),
+          }),
+        })
+          .then((response) => {
+            console.log("✅ Requête envoyée!");
+            console.log("Status:", response.status);
+
+            if (response.ok) {
+              console.log("✅ Vœu envoyé avec succès!");
+
+              // Save locally
+              localStorage.setItem("sarah_wish", wish);
+              localStorage.setItem("sarah_wish_name", wishName);
+              localStorage.setItem(
+                "sarah_wish_timestamp",
+                new Date().toISOString(),
+              );
+              console.log("💾 Données sauvegardées localement");
+
+              document.getElementById("wishPopup").classList.remove("show");
+
+              // Reset form
+              document.getElementById("wishName").value = "";
+              document.getElementById("wishInput").value = "";
+              wishButton.disabled = false;
+              wishButton.textContent = "Envoyer ✨";
+
+              console.log("✨ Formulaire réinitialisé");
+              console.log("=== FIN SUCCÈS ===");
+
+              // Show success message
+              alert(
+                "✨ Ton vœu a été envoyé avec succès! Merci " +
+                  wishName +
+                  " 💝",
+              );
+            } else {
+              throw new Error("Erreur serveur: " + response.status);
+            }
+          })
+          .catch((error) => {
+            console.error("❌ Erreur lors de l'envoi!");
+            console.error("Détails:", error);
+
+            // Still save locally if email fails
+            localStorage.setItem("sarah_wish", wish);
+            localStorage.setItem("sarah_wish_name", wishName);
+            localStorage.setItem(
+              "sarah_wish_timestamp",
+              new Date().toISOString(),
+            );
+            console.log("💾 Données sauvegardées localement (mode secours)");
+
+            document.getElementById("wishPopup").classList.remove("show");
+            document.getElementById("wishName").value = "";
+            document.getElementById("wishInput").value = "";
+            wishButton.disabled = false;
+            wishButton.textContent = "Envoyer ✨";
+
+            console.log("⚠️ Formulaire réinitialisé en mode erreur");
+            console.log("=== FIN ERREUR ===");
+
+            alert("✨ Ton vœu a été enregistré! Merci " + wishName + " 💝");
+          });
       }
 
       // ── BLOW CANDLES ──
